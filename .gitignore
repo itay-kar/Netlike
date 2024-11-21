@@ -1,0 +1,94 @@
+# Node.js dependencies
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# Build output
+dist/
+build/
+
+# Logs
+logs/
+*.log
+*.log.*
+
+# Environment files
+.env
+.env.*.local
+
+# Editor directories and files
+.idea/
+.vscode/
+*.swp
+*.swo
+*.swn
+*.bak
+*.tmp
+
+# System files
+.DS_Store
+Thumbs.db
+
+# OS files
+*.~lock.*
+*.~undo.*
+
+# React-specific files
+*.cache/
+.cache/
+public/static/
+*.lock
+*.gz
+*.br
+
+# Test coverage
+coverage/
+
+# Misc
+.sass-cache/
+*.css.map
+*.js.map
+
+# MongoDB files
+data/
+dump/
+
+# Temporary database files
+*.lock
+*.pid
+
+# Dependency directories for Node.js
+node_modules/
+
+# Lock files
+package-lock.json
+yarn.lock
+
+# Temporary files
+*.tmp
+*.temp
+
+# Next.js
+.next/
+
+# Firebase files
+.firebase/
+
+# Serverless Framework files
+.serverless/
+
+# Parcel-bundler cache
+.cache/
+
+# Storybook files
+storybook-static/
+
+# macOS and Linux system files
+*.swp
+.svn
+
+# Local MongoDB data (if running locally)
+mongodb.log
+mongod.lock
