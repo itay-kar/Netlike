@@ -1,5 +1,6 @@
 import express from 'express';
 import cookieParser from 'cookie-parser';
+import cors from 'cors';
 
 import authRoutes from "./routes/auth.route.js";
 import movieRoutes from "./routes/movie.route.js";
@@ -9,17 +10,20 @@ import { ENV_VARS } from './config/envVars.js';
 import { connectDB } from './config/db.js';
 import { protectRoute } from './middleware/protectRoute.js';
 
-
 const app = express();
 const PORT = ENV_VARS.PORT;
 
-app.use(express.json()); // to parse the incoming request with JSON payloads
+app.use(cors({
+    origin: 'http://localhost:5173',
+    credentials: true,
+}));
+app.use(express.json());
 app.use(cookieParser());
 
-app.use('/api/v1/auth', authRoutes); // setting up the routes
-app.use('/api/v1/movies',protectRoute, movieRoutes); // setting up the routes
-app.use('/api/v1/tv',protectRoute, tvRoutes); // setting up the routes
-app.use('/api/v1/search',protectRoute, searchRoutes); // setting up the routes
+app.use('/api/v1/auth', authRoutes);
+app.use('/api/v1/movies', protectRoute, movieRoutes);
+app.use('/api/v1/tv', protectRoute, tvRoutes);
+app.use('/api/v1/search', protectRoute, searchRoutes);
 
 app.listen(PORT, () => {
     console.log(`Server started at http://localhost:${PORT}`);

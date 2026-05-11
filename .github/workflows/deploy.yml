@@ -1,0 +1,55 @@
+name: Build & Push Docker Images
+
+on:
+  push:
+    branches: [main]
+
+jobs:
+  build-and-push:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Log in to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}   # use an Access Token, not your password
+
+      # ── Backend image ────────────────────────────────────────────────────
+      - name: Build and push backend
+        uses: docker/build-push-action@v5
+        with:
+          context: .                           # project root
+          file: backend/Dockerfile
+          push: true
+          tags: |
+            ${{ secrets.DOCKERHUB_USERNAME }}/netlike-backend:latest
+            ${{ secrets.DOCKERHUB_USERNAME }}/netlike-backend:${{ github.sha }}
+
+      # ── Frontend image ───────────────────────────────────────────────────
+      - name: Build and push frontend
+        uses: docker/build-push-action@v5
+        with:
+          context: ./frontend
+          file: frontend/Dockerfile
+          push: true
+          tags: |
+            ${{ secrets.DOCKERHUB_USERNAME }}/netlike-frontend:latest
+            ${{ secrets.DOCKERHUB_USERNAME }}/netlike-frontend:${{ github.sha }}
+
+      # ── Optional: redeploy on a K8s cluster ─────────────────────────────
+      # Uncomment and configure if you have a cluster with kubectl access.
+      #
+      # - name: Set up kubectl
+      #   uses: azure/setup-kubectl@v3
+      #
+      # - name: Configure kubeconfig
+      #   run: echo "${{ secrets.KUBECONFIG }}" | base64 -d > $HOME/.kube/config
+      #
+      # - name: Rolling restart
+      #   run: |
+      #     kubectl rollout restart deployment/backend -n netlike
+      #     kubectl rollout restart deployment/frontend -n netlike

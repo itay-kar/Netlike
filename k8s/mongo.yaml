@@ -1,0 +1,49 @@
+# Headless Service — gives each StatefulSet pod a stable DNS name:
+#   mongo-0.mongo.netlike.svc.cluster.local
+apiVersion: v1
+kind: Service
+metadata:
+  name: mongo
+  namespace: netlike
+spec:
+  clusterIP: None          # "headless" — no load balancing, direct pod DNS
+  selector:
+    app: mongo
+  ports:
+    - port: 27017
+      targetPort: 27017
+
+---
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: mongo
+  namespace: netlike
+spec:
+  serviceName: mongo       # must match the headless Service name above
+  replicas: 1              # scale carefully — MongoDB replication is separate
+  selector:
+    matchLabels:
+      app: mongo
+  template:
+    metadata:
+      labels:
+        app: mongo
+    spec:
+      containers:
+        - name: mongo
+          image: mongo:7
+          ports:
+            - containerPort: 27017
+          volumeMounts:
+            - name: mongo-data
+              mountPath: /data/db
+  # K8s creates one PVC per pod automatically and keeps it when the pod restarts
+  volumeClaimTemplates:
+    - metadata:
+        name: mongo-data
+      spec:
+        accessModes: ["ReadWriteOnce"]
+        resources:
+          requests:
+            storage: 5Gi

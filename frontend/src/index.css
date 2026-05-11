@@ -2,6 +2,16 @@
 @tailwind components;
 @tailwind utilities;
 
-.hero-bg{
-    background-image: linear-gradient(rgba(0,0,0,0.1), rgba(0,0,0,0.8)), url("hero.png")
+.hero-bg {
+    background-image: linear-gradient(rgba(0,0,0,0.1), rgba(0,0,0,0.8)), url("/hero.png");
+    background-size: cover;
+    background-position: center;
+}
+
+.scrollbar-hide {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+}
+.scrollbar-hide::-webkit-scrollbar {
+    display: none;
 }

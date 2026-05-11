@@ -46,6 +46,9 @@ public/static/
 # Test coverage
 coverage/
 
+# Claude Code session files
+.claude/
+
 # Misc
 .sass-cache/
 *.css.map

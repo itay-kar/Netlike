@@ -1,0 +1,32 @@
+# Requires ingress-nginx controller.
+# Install it with:
+#   kubectl apply -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/controller-v1.11.1/deploy/static/provider/cloud/deploy.yaml
+#
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: netlike-ingress
+  namespace: netlike
+spec:
+  ingressClassName: nginx
+  rules:
+    - host: netlike.example.com    # replace with your domain (or use IP for testing)
+      http:
+        paths:
+          # /api/** → backend (path is forwarded as-is, no rewriting)
+          - path: /api
+            pathType: Prefix
+            backend:
+              service:
+                name: backend
+                port:
+                  number: 5000
+
+          # /** → frontend nginx
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: frontend
+                port:
+                  number: 80

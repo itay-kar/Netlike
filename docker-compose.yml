@@ -1,0 +1,48 @@
+version: "3.9"
+
+services:
+
+  # ── MongoDB ────────────────────────────────────────────────────────────────
+  mongo:
+    image: mongo:7
+    restart: unless-stopped
+    volumes:
+      - mongo_data:/data/db        # data survives container restarts
+    networks:
+      - netlike
+
+  # ── Backend (Express) ──────────────────────────────────────────────────────
+  backend:
+    build:
+      context: .                   # project root (contains package.json + backend/)
+      dockerfile: backend/Dockerfile
+    restart: unless-stopped
+    env_file: .env                 # reads your .env file
+    environment:
+      - MONGO_URI=mongodb://mongo:27017/netlike   # overrides .env MONGO_URI
+      - NODE_ENV=production
+    depends_on:
+      - mongo
+    networks:
+      - netlike
+    # backend port is NOT exposed to the host — only nginx talks to it
+
+  # ── Frontend (nginx) ───────────────────────────────────────────────────────
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    restart: unless-stopped
+    ports:
+      - "80:80"                    # only public entry point
+    depends_on:
+      - backend
+    networks:
+      - netlike
+
+volumes:
+  mongo_data:
+
+networks:
+  netlike:
+    driver: bridge

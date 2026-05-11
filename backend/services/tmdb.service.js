@@ -11,7 +11,7 @@ export const fetchFromTMDB = async (path) => {
 
       const response = await axios.get(path, options);
     
-      if (response.status != 200) {
+      if (response.status !== 200) {
         throw new Error('Failed to fetch data from TMDB' + response.statusText);
       }
 

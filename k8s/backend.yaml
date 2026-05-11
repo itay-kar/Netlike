@@ -1,0 +1,65 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: backend
+  namespace: netlike
+spec:
+  replicas: 2              # two pods — K8s load balances between them
+  selector:
+    matchLabels:
+      app: backend
+  template:
+    metadata:
+      labels:
+        app: backend
+    spec:
+      containers:
+        - name: backend
+          # Replace with your Docker Hub username or registry
+          image: DOCKERHUB_USERNAME/netlike-backend:latest
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 5000
+          # Non-sensitive config from ConfigMap
+          envFrom:
+            - configMapRef:
+                name: netlike-config
+          # Sensitive config from Secret
+          env:
+            - name: MONGO_URI
+              valueFrom:
+                secretKeyRef:
+                  name: netlike-secrets
+                  key: MONGO_URI
+            - name: JWT_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: netlike-secrets
+                  key: JWT_SECRET
+            - name: TMDB_API_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: netlike-secrets
+                  key: TMDB_API_KEY
+          # K8s won't send traffic until this passes
+          readinessProbe:
+            httpGet:
+              path: /api/v1/auth/me   # 401 is fine — it means the server is up
+              port: 5000
+            initialDelaySeconds: 5
+            periodSeconds: 10
+            failureThreshold: 3
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: backend
+  namespace: netlike
+spec:
+  selector:
+    app: backend
+  ports:
+    - port: 5000
+      targetPort: 5000
+  # ClusterIP = internal only, reachable by Ingress but not from outside
