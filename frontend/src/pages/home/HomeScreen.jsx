@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { Play, Info, X, Star } from 'lucide-react';
+import PropTypes from 'prop-types';
 import ReactPlayer from 'react-player';
 import Navbar from '../../components/Navbar';
 import axios from '../../lib/axios';
@@ -24,6 +25,12 @@ const ContentRow = ({ title, items, onSelect }) => {
             </div>
         </div>
     );
+};
+
+ContentRow.propTypes = {
+    title: PropTypes.string.isRequired,
+    items: PropTypes.array.isRequired,
+    onSelect: PropTypes.func.isRequired,
 };
 
 const TrailerModal = ({ trailerKey, onClose }) => (
@@ -51,6 +58,11 @@ const TrailerModal = ({ trailerKey, onClose }) => (
         </div>
     </div>
 );
+
+TrailerModal.propTypes = {
+    trailerKey: PropTypes.string.isRequired,
+    onClose: PropTypes.func.isRequired,
+};
 
 const InfoPanel = ({ item, type, onClose, onPlay }) => {
     const title = item.title || item.name;
@@ -116,6 +128,13 @@ const InfoPanel = ({ item, type, onClose, onPlay }) => {
             </div>
         </div>
     );
+};
+
+InfoPanel.propTypes = {
+    item: PropTypes.object.isRequired,
+    type: PropTypes.string.isRequired,
+    onClose: PropTypes.func.isRequired,
+    onPlay: PropTypes.func.isRequired,
 };
 
 const HomeScreen = () => {
